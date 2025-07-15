@@ -1,0 +1,92 @@
+---
+import { toRem } from '@lib/helpers';
+import Picture from '@components/Picture.astro';
+import ImageCaption from '@components/ImageCaption.astro';
+import ImageCopyright from './ImageCopyright.astro';
+import Link from '@components/Link.astro';
+
+const {
+	global,
+	image,
+	ratioDesktop,
+	ratioMobile,
+	loading,
+	span,
+	backgroundContainer,
+	lightbox,
+	aboveFold,
+	isFirstSlide,
+} = Astro.props;
+
+const gridBlockMobile = toRem(global.gridBlockMobile) || '1rem';
+const gridBlockDesktop = toRem(global.gridBlockDesktop) || '1rem';
+const pictureProps = {
+	src: image.url,
+	urlFocus: image.urlFocus,
+	urlFocusMobile: image.urlFocusMobile,
+	width: image.width,
+	height: image.height,
+	alt: image.alt,
+	name: image.name,
+	id: image.identifier,
+	ratioMobile: ratioMobile,
+	ratioDesktop: ratioDesktop,
+	backgroundContainer: backgroundContainer,
+	loading: loading,
+	span: span,
+	lightbox: lightbox,
+	gridGapMobile: global.gridGapMobile,
+	gridMarginMobile: global.gridMarginMobile,
+	gridGapDesktop: global.gridGapDesktop,
+	gridMarginDesktop: global.gridMarginDesktop,
+	positon: 'relative',
+	class: image.classes
+		? `${image.classes} w-full object-cover`
+		: 'w-full object-cover',
+	thumbhash: image.thumbhash,
+	aboveFold: aboveFold,
+	isFirstSlide: isFirstSlide,
+};
+const link = image.linkexternal;
+
+const shouldApplyZoom = lightbox && !image.linktoggle;
+---
+
+{
+	image.linktoggle ? (
+		<Link link={link} aria-label={`Mehr zu ${image.alt}`}>
+			<div
+				class:list={[
+					'relative',
+					image.captionoverlay === 'overlay' && 'overlay',
+				]}
+			>
+				<Picture {...pictureProps} />
+				{image.captiontoggle ? (
+					<ImageCaption {...image} global={global} />
+				) : null}
+				{image.copyrighttoggle ? <ImageCopyright {...image} /> : null}
+			</div>
+		</Link>
+	) : (
+		<div
+			class:list={['relative', image.captionoverlay === 'overlay' && 'overlay']}
+		>
+			<Picture
+				{...pictureProps}
+				dataZoomable={shouldApplyZoom ? true : undefined}
+			/>
+			{image.captiontoggle ? <ImageCaption {...image} global={global} /> : null}
+			{image.copyrighttoggle ? <ImageCopyright {...image} /> : null}
+		</div>
+	)
+}
+
+<style lang="css" define:vars={{ gridBlockMobile, gridBlockDesktop }}>
+	.text-content {
+		@apply mt-[var(--gridBlockMobile)] lg:mt-[var(--gridBlockDesktop)];
+	}
+	.overlay:before {
+		@apply absolute left-0 top-0 h-full w-full bg-[rgba(_0,0,0,0.25_)] content-[''];
+	}
+</style>

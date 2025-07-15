@@ -1,0 +1,171 @@
+---
+import { toRem } from '@lib/helpers';
+import Layouts from '@components/Layouts.astro';
+import ImageComponent from '@components/ImageComponent.astro';
+import Pagination from '@components/Pagination.astro';
+
+const { data, global, page } = Astro.props;
+const { lang } = Astro.params;
+const { settings } = data;
+
+// The problem: page.data contains ALL items instead of just this page's items
+// We need to slice the data according to the current page
+const pageItems = page.data.slice(0, page.size);
+
+const {
+	ratio,
+	grid: { span, gap },
+	title,
+	text,
+} = settings;
+
+const {
+	level: TitleLevel,
+	font: titleFont,
+	color: titleColor,
+	size: titleSize,
+	align: titleAlign,
+} = title;
+
+const {
+	font: textFont,
+	color: textColor,
+	size: textSize,
+	align: textAlign,
+} = text;
+const pageSize = page.size;
+const pageTotal = page.total;
+const layoutPre = data.layoutPre;
+const layoutPost = data.layoutPost;
+const ratioMobile = settings.ratioMobile;
+const spanMobile = settings.grid.spanMobile;
+const gapDesktop = toRem(gap);
+const gapMobile = toRem(gap);
+const gridBlockMobile = toRem(global.gridBlockMobile) || '1rem';
+const gridBlockDesktop = toRem(global.gridBlockDesktop) || '1rem';
+
+const pathname = new URL(Astro.request.url).pathname.split('/');
+const translations = global.translations.map((lang) => lang.code);
+const prefixDefaultLocale = global.prefixDefaultLocale;
+const currentLang = data.lang;
+const defaultLang = global.defaultLang.code;
+const firstPath =
+	translations.length < 1 ||
+	(!prefixDefaultLocale && defaultLang === currentLang)
+		? pathname[1]
+		: pathname[1] + '/' + pathname[2];
+---
+
+{layoutPre && <Layouts layouts={layoutPre} global={global} class="layoutPre" />}
+
+<section class="section container">
+	<div class="grid-default">
+		{
+			pageItems
+				.filter((item) => item.status === 'listed')
+				.sort((a, b) => a.position - b.position)
+				.map((item) => {
+					const image = item.thumbnail;
+					const coverOnly = item.coverOnly;
+					return (
+						<div
+							class:list={[
+								`section-item`,
+								`col-span-${spanMobile}`,
+								`lg:col-span-${span}`,
+							]}
+						>
+							{coverOnly ? (
+								<ImageComponent
+									global={global}
+									image={image}
+									loading="lazy"
+									ratioMobile={ratioMobile}
+									ratioDesktop={ratio}
+									backgroundContainer="container"
+									span={span}
+								/>
+							) : (
+								<a href={lang ? `/${lang}/${item.uri}` : '/' + item.uri}>
+									<ImageComponent
+										global={global}
+										image={image}
+										loading="lazy"
+										ratioMobile={ratioMobile}
+										ratioDesktop={ratio}
+										backgroundContainer="container"
+										span={span}
+									/>
+								</a>
+							)}
+
+							<TitleLevel
+								class:list={[
+									'title',
+									`text--${titleColor}`,
+									`font--${titleSize}`,
+									`text--${titleAlign}`,
+								]}
+								set:html={item.title}
+							/>
+
+							<p
+								class:list={[
+									'text',
+									`text--${textColor}`,
+									`font--${textSize}`,
+									`text--${textAlign}`,
+								]}
+								set:html={item.description}
+							/>
+						</div>
+					);
+				})
+		}
+	</div>
+	{
+		pageSize < pageTotal && (
+			<Pagination
+				global={global}
+				length={page.lastPage}
+				currentUrl={page.url.current}
+				currentPage={page.currentPage}
+				firstUrl={`/${firstPath}`}
+				prevUrl={page.url.prev}
+				nextUrl={page.url.next}
+				lastUrl={`/${firstPath}/${page.lastPage}`}
+			/>
+		)
+	}
+</section>
+
+{
+	layoutPost && (
+		<Layouts layouts={layoutPost} global={global} class="layoutPost" />
+	)
+}
+
+<style
+	lang="css"
+	define:vars={{
+		gapDesktop,
+		gapMobile,
+		gridBlockMobile,
+		gridBlockDesktop,
+		titleFont,
+		textFont,
+	}}
+>
+	.title {
+		@apply mt-[var(--gridBlockMobile)] lg:mt-[var(--gridBlockDesktop)];
+		font-family: var(--titleFont);
+	}
+
+	.text {
+		font-family: var(--textFont);
+	}
+
+	.grid-default {
+		@apply gap-y-[var(--gapMobile)] lg:gap-y-[var(--gapDesktop,)];
+	}
+</style>
