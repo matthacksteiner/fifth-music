@@ -1,0 +1,40 @@
+@keyframes shadow {
+	0% {
+		text-shadow: -0.1em 0 var(--colorSecondary), 0.1em 0 var(--colorTertiary);
+	}
+	25% {
+		text-shadow: -0.05em 0 var(--colorSecondary), 0.05em 0 var(--colorTertiary);
+	}
+	50% {
+		text-shadow: 0.1em 0 var(--colorSecondary), -0.1em 0 var(--colorTertiary);
+	}
+	75% {
+		text-shadow: -0.05em 0 var(--colorSecondary), 0.05em 0 var(--colorTertiary);
+	}
+	100% {
+		text-shadow: -0.1em 0 var(--colorSecondary), 0.1em 0 var(--colorTertiary);
+	}
+}
+
+@keyframes logoColor {
+	0% {
+		color: var(--colorPrimary);
+		fill: var(--colorPrimary);
+	}
+	25% {
+		color: var(--colorSecondary);
+		fill: var(--colorSecondary);
+	}
+	50% {
+		color: var(--colorTertiary);
+		fill: var(--colorTertiary);
+	}
+	75% {
+		color: var(--colorBlack);
+		fill: var(--colorBlack);
+	}
+	100% {
+		color: var(--colorPrimary);
+		fill: var(--colorPrimary);
+	}
+}

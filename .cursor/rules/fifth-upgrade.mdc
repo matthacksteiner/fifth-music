@@ -1,0 +1,1065 @@
+---
+alwaysApply: false
+---
+
+# Fifth Music - Kirby 2 to Kirby 4 Upgrade Documentation
+
+## Overview
+
+This document captures all relevant information from the original Kirby 2 project (fifth-music-old) to assist in upgrading to Kirby 4 using the Baukasten system.
+
+## Typography & Fonts
+
+### Font Families Used
+
+- **fifth-regular**: Akkurat-Normal (main body text)
+- **fifth-light**: Akkurat-Leicht (light weight, 300)
+- **fifth-light-italic**: Akkurat-LeichtKursiv (light italic, 300)
+- **fifth-bold**: Akkurat-Fett (bold headings and emphasis)
+
+### Font File Formats
+
+All fonts available in: .eot, .woff2, .woff, .ttf, .svg formats for cross-browser compatibility
+
+### Typography Hierarchy
+
+```scss
+h1 {
+	font-family: fifth-bold;
+	text-transform: uppercase;
+	text-shadow: -6px 0 $fifth-blue, 6px 0 $fifth-yellow;
+	responsive-font: 5vw (min: 20px);
+	letter-spacing: -0.1rem;
+	line-height: 1.2;
+}
+
+h2 {
+	font-family: fifth-bold;
+	text-transform: uppercase;
+	text-shadow: -6px 0 $fifth-blue, 6px 0 $fifth-yellow;
+	responsive-font: 4.5vw (min: 24px, max: 64px);
+	letter-spacing: -0.1rem;
+	line-height: 1.25;
+}
+
+h3 {
+	font-family: fifth-light;
+	color: $fifth-white;
+	responsive-font: 2vw (min: 18px, max: 58px);
+	letter-spacing: -0.1rem;
+	line-height: 1.3;
+}
+```
+
+## Color Palette
+
+### Primary Colors
+
+```scss
+$fifth-red: rgba(246, 77, 100, 1); // #F64D64 - Primary accent
+$fifth-blue: rgba(144, 212, 197, 1); // #90D4C5 - Secondary accent
+$fifth-yellow: rgba(255, 247, 86, 1); // #FFF756 - Tertiary accent
+$fifth-white: rgba(250, 250, 250, 1); // #FAFAFA - Background
+$fifth-lightgrey: rgba(245, 245, 245, 1); // #F5F5F5 - Light background
+$fifth-darkgrey: rgba(96, 108, 118, 1); // #606C76 - Text/UI elements
+```
+
+### Color Usage
+
+- **Red**: Primary links, hover states, active navigation
+- **Blue**: Secondary accents, shadow effects, tag filters
+- **Yellow**: Footer background, shadow effects
+- **Dark Grey**: Main text color, navigation, icons
+- **Light Grey**: Page background
+
+## Layout & Grid System
+
+### Responsive Breakpoints
+
+```scss
+// Extra small mobile
+@mixin xsm_only {
+	@media (min-width: 320px) and (max-width: 480px);
+}
+
+// Small (mobile)
+@mixin sm_only {
+	@media (max-width: 39.9375em);
+}
+
+// Medium
+@mixin md_down {
+	@media (max-width: 40em);
+}
+@mixin md_up {
+	@media (min-width: 40em);
+}
+@mixin md_only {
+	@media (min-width: 40em) and (max-width: 63.9375em);
+}
+
+// Large
+@mixin lg_down {
+	@media (max-width: 64em);
+}
+@mixin lg_up {
+	@media (min-width: 64em);
+}
+@mixin lg_only {
+	@media (min-width: 64em) and (max-width: 74.9375em);
+}
+
+// Extra large
+@mixin xlarge-up-4 {
+	@media (min-width: 74.9375em);
+}
+```
+
+### Foundation Grid
+
+- Uses Foundation CSS framework for grid system
+- Custom .row with max-width: none
+- Custom xlarge-up-4 grid (25% width columns)
+
+## Navigation Structure
+
+### Desktop Navigation
+
+- **Home page**: `nav#desktop_start` - Initially hidden (opacity: 0)
+- **Other pages**: `nav#desktop` - Visible (opacity: 1)
+- Fixed position (top: 10px, right: 0)
+- SVG logo with hover effects
+- Sticky navigation with animation on scroll
+
+### Mobile Navigation
+
+- Fixed bottom navigation (`nav#mobile`)
+- 4em height with centered content
+- Icons + text labels
+- Auto-hide on scroll down, show on scroll up
+
+### Navigation Animations
+
+- Sticky animation: `moveDown` keyframe (slides from -40px)
+- Mobile auto-hide with smooth transitions
+- Logo color animation on hover (cycles through brand colors)
+
+## Key Animations & Effects
+
+### Logo Animations
+
+1. **SVG Path Drawing Animation** (preloader)
+
+   - Circle path: 4.5s ease-in-out stroke-dashoffset
+   - Font path: 2s ease-in-out stroke-dashoffset
+   - Session storage prevents replay
+
+2. **Logo Color Cycle** (on hover)
+
+```scss
+@keyframes logoColor {
+	0% {
+		color: $fifth-red;
+	}
+	25% {
+		color: $fifth-yellow;
+	}
+	50% {
+		color: $fifth-blue;
+	}
+	75% {
+		color: $fifth-darkgrey;
+	}
+	100% {
+		color: $fifth-red;
+	}
+}
+```
+
+### Text Shadow Animation
+
+```scss
+@keyframes shadow {
+	0% {
+		text-shadow: -0.1em 0 $fifth-blue, 0.1em 0 $fifth-yellow;
+	}
+	25% {
+		text-shadow: -0.05em 0 $fifth-blue, 0.05em 0 $fifth-yellow;
+	}
+	50% {
+		text-shadow: 0.1em 0 $fifth-blue, -0.1em 0 $fifth-yellow;
+	}
+	75% {
+		text-shadow: -0.05em 0 $fifth-blue, 0.05em 0 $fifth-yellow;
+	}
+	100% {
+		text-shadow: -0.1em 0 $fifth-blue, 0.1em 0 $fifth-yellow;
+	}
+}
+```
+
+### Background Canvas Animation
+
+- Sine wave animation using HTML5 Canvas
+- Multiple colored sine waves with different phases
+- Colors: $fifth-darkgrey, $fifth-red, $fifth-blue, $fifth-yellow
+- 35ms refresh rate, decreasing seconds by .0025
+
+### Hover Effects - Portfolio Grid
+
+```scss
+figure.effect:hover {
+	img {
+		transform: scale3d(1.1, 1.1, 1);
+		opacity: 0.4;
+	}
+	p {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+```
+
+### Preloader Animation
+
+```scss
+@keyframes moveit {
+	0% {
+		transform: translateY(0px);
+	}
+	35% {
+		transform: translateY(0px);
+		opacity: 0.3;
+	}
+	50% {
+		transform: translateY(-8px);
+		opacity: 0.8;
+	}
+	70% {
+		transform: translateY(3px);
+		opacity: 0.8;
+	}
+	85% {
+		transform: translateY(-8px);
+	}
+}
+```
+
+## Interactive Elements
+
+### Link Styles
+
+```scss
+a {
+	padding: 0.2em 0.1em 0 0.1em;
+	transition: 0.5s;
+	color: inherit;
+	background: rgba($fifth-red, 0);
+	box-shadow: inset 0 -0.3em 0 $fifth-red;
+
+	&:hover {
+		color: $fifth-white;
+		background: $fifth-red;
+	}
+}
+```
+
+### Button Styles
+
+```scss
+.tags li a {
+	font-family: $fifth-bold;
+	transition: color 0.4s, background-color 0.4s;
+	color: $fifth-blue;
+	border: 3px $fifth-blue solid;
+	border-radius: 4px;
+
+	&:hover {
+		color: $fifth-white;
+		background-color: $fifth-blue;
+	}
+}
+```
+
+### Tooltip System
+
+- Custom CSS tooltips with data-tooltip attribute
+- Multiple positions: default, left, right
+- Smooth transitions with cubic-bezier easing
+- Triangle indicators for certain tooltips
+
+## Layout Components
+
+### Spacing System
+
+```scss
+// Margin classes
+.spacer-top-l {
+	margin-top: 8em;
+	@md_up: 16em;
+}
+.spacer-top-m {
+	margin-top: 4em;
+	@md_up: 12em;
+}
+.spacer-top-s {
+	margin-top: 2em;
+	@md_up: 4em;
+}
+.spacer-top-xs {
+	margin-top: 1em;
+	@md_up: 2em;
+}
+
+// Similar pattern for bottom, both
+```
+
+### Video Container
+
+```scss
+.videocontainer {
+	position: relative;
+	overflow: hidden;
+	max-width: 100%;
+	height: 0;
+	padding-bottom: 56.25%; // 16:9 aspect ratio
+
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+```
+
+## Page Templates & Structure
+
+### Home Page Structure
+
+1. **Hero Section** (`#start`)
+
+   - Logo
+   - Animated subline text
+   - Background canvas animation
+   - Height: 100vh on large screens
+
+2. **Video Section**
+
+   - Responsive video container
+   - Vimeo embed with custom styling
+
+3. **Last Projects** (snippet)
+4. **Clients** (snippet)
+5. **Contact Section**
+   - Address information
+   - Social media links
+
+### Portfolio Page Structure
+
+1. **Portfolio Grid**
+
+   - Responsive grid: 1/2/3/4 columns
+   - Tag filtering system
+   - Hover effects on project items
+   - Pagination with SVG arrows
+
+2. **Project Items**
+   - Image with multiple srcset sizes
+   - Title and tags overlay
+   - Smooth transform animations
+
+### Project Page Structure
+
+1. **Project Title**
+2. **Video Container**
+3. **Navigation** (prev/next/overview)
+   - Keyboard navigation support (arrow keys)
+   - SVG icons with hover effects
+   - Tooltips
+
+## Scripts & JavaScript Features
+
+### Main JavaScript (main.js)
+
+1. **Touch/No-touch Detection**
+
+   - Adds classes for conditional styling
+
+2. **Mobile Navigation Auto-hide**
+
+   - Scroll direction detection
+   - Smooth show/hide animations
+
+3. **Desktop Tag Filtering**
+
+   - jQuery-based fade effects
+   - Filter by project tags
+
+4. **Keyboard Navigation**
+
+   - Mousetrap.js integration
+   - Arrow keys for project navigation
+   - Up arrow for overview
+
+5. **Background Animation**
+   - Canvas-based sine wave animation
+   - Multiple colored waves
+   - Continuous animation loop
+
+### Preloader Script (preload.js)
+
+1. **SVG Path Animation**
+
+   - Stroke-dasharray/dashoffset animation
+   - Separate timing for circle and text
+   - Session storage to prevent replay
+
+2. **Fade Transitions**
+   - Status and preloader fade out
+   - Coordinated timing
+
+### Plugin Dependencies
+
+- **jQuery 2.2.3**: DOM manipulation, animations
+- **Mousetrap 1.5.3**: Keyboard event handling
+- **Picturefill 3.0.2**: Responsive images polyfill
+- **Foundation CSS**: Grid system and responsive utilities
+
+## Content Structure
+
+### Page Types
+
+1. **Home** - Hero page with video and company info
+2. **Portfolio** - Grid of projects with filtering
+3. **Project** - Individual project details with video
+4. **About** - Company information
+5. **Contact** - Contact details and form
+6. **Blog** - Article listings (if used)
+
+### Content Fields
+
+**Home Page:**
+
+- Title, reel (video ID), subline, bio
+
+**Project Pages:**
+
+- Title, video (Vimeo ID), text (description), tags
+
+**Portfolio Page:**
+
+- Title, children (projects)
+
+### Media Handling
+
+- Responsive images with srcset
+- Multiple breakpoints: 100w through 2000w
+- Quality: 70% JPEG compression
+- Crop: true for consistent aspect ratios
+
+## Performance Optimizations
+
+### Image Optimization
+
+- Progressive JPEG loading
+- Multiple sizes in srcset
+- Lazy loading considerations
+- Optimized thumbnail generation
+
+### CSS Architecture
+
+- SCSS with mixins for responsive design
+- Efficient selector usage
+- Consolidated animations
+- Vendor prefixes for cross-browser support
+
+### JavaScript Optimization
+
+- Minified vendor libraries
+- Event delegation
+- Throttled scroll events
+- Session storage for performance
+
+## SEO & Meta
+
+- Semantic HTML structure
+- Proper meta tags
+- Open Graph compatibility
+- Favicon implementation
+- Structured navigation
+
+## Browser Support
+
+- Modern browsers with graceful degradation
+- CSS fallbacks for older browsers
+- Progressive enhancement approach
+- Touch vs no-touch feature detection
+
+## Migration Notes for Baukasten
+
+### Required Blocks
+
+1. **BlockVideo** - For project videos and hero video
+2. **BlockText** - For project descriptions and content
+3. **BlockGrid** - For portfolio grid layout
+4. **BlockImage** - For project thumbnails and images
+
+### Custom Components Needed
+
+1. **Navigation component** - Desktop/mobile with animations
+2. **Portfolio grid** - With filtering and hover effects
+3. **Video container** - Responsive Vimeo embeds
+4. **Preloader** - SVG animation component
+5. **Background animation** - Canvas sine waves
+
+### Styling Considerations
+
+1. **Responsive font sizing** - Custom mixin implementation
+2. **Color system** - Brand color variables
+3. **Animation library** - All keyframe animations
+4. **Grid system** - Custom responsive breakpoints
+5. **Typography** - Font loading and fallbacks
+
+### JavaScript Features to Recreate
+
+1. **Keyboard navigation** - Arrow key project navigation
+2. **Touch detection** - For conditional styling
+3. **Scroll animations** - Mobile nav auto-hide
+4. **Canvas animation** - Background sine waves
+5. **SVG animations** - Logo path drawing
+6. **Tag filtering** - Portfolio filter system
+
+This documentation provides a complete reference for recreating the original Fifth Music website functionality and aesthetic in the new Kirby 4 + Baukasten system.
+
+# Fifth Music - Kirby 2 to Kirby 4 Upgrade Documentation
+
+## Overview
+
+This document captures all relevant information from the original Kirby 2 project (fifth-music-old) to assist in upgrading to Kirby 4 using the Baukasten system.
+
+## Typography & Fonts
+
+### Font Families Used
+
+- **fifth-regular**: Akkurat-Normal (main body text)
+- **fifth-light**: Akkurat-Leicht (light weight, 300)
+- **fifth-light-italic**: Akkurat-LeichtKursiv (light italic, 300)
+- **fifth-bold**: Akkurat-Fett (bold headings and emphasis)
+
+### Font File Formats
+
+All fonts available in: .eot, .woff2, .woff, .ttf, .svg formats for cross-browser compatibility
+
+### Typography Hierarchy
+
+```scss
+h1 {
+	font-family: fifth-bold;
+	text-transform: uppercase;
+	text-shadow: -6px 0 $fifth-blue, 6px 0 $fifth-yellow;
+	responsive-font: 5vw (min: 20px);
+	letter-spacing: -0.1rem;
+	line-height: 1.2;
+}
+
+h2 {
+	font-family: fifth-bold;
+	text-transform: uppercase;
+	text-shadow: -6px 0 $fifth-blue, 6px 0 $fifth-yellow;
+	responsive-font: 4.5vw (min: 24px, max: 64px);
+	letter-spacing: -0.1rem;
+	line-height: 1.25;
+}
+
+h3 {
+	font-family: fifth-light;
+	color: $fifth-white;
+	responsive-font: 2vw (min: 18px, max: 58px);
+	letter-spacing: -0.1rem;
+	line-height: 1.3;
+}
+```
+
+## Color Palette
+
+### Primary Colors
+
+```scss
+$fifth-red: rgba(246, 77, 100, 1); // #F64D64 - Primary accent
+$fifth-blue: rgba(144, 212, 197, 1); // #90D4C5 - Secondary accent
+$fifth-yellow: rgba(255, 247, 86, 1); // #FFF756 - Tertiary accent
+$fifth-white: rgba(250, 250, 250, 1); // #FAFAFA - Background
+$fifth-lightgrey: rgba(245, 245, 245, 1); // #F5F5F5 - Light background
+$fifth-darkgrey: rgba(96, 108, 118, 1); // #606C76 - Text/UI elements
+```
+
+### Color Usage
+
+- **Red**: Primary links, hover states, active navigation
+- **Blue**: Secondary accents, shadow effects, tag filters
+- **Yellow**: Footer background, shadow effects
+- **Dark Grey**: Main text color, navigation, icons
+- **Light Grey**: Page background
+
+## Layout & Grid System
+
+### Responsive Breakpoints
+
+```scss
+// Extra small mobile
+@mixin xsm_only {
+	@media (min-width: 320px) and (max-width: 480px);
+}
+
+// Small (mobile)
+@mixin sm_only {
+	@media (max-width: 39.9375em);
+}
+
+// Medium
+@mixin md_down {
+	@media (max-width: 40em);
+}
+@mixin md_up {
+	@media (min-width: 40em);
+}
+@mixin md_only {
+	@media (min-width: 40em) and (max-width: 63.9375em);
+}
+
+// Large
+@mixin lg_down {
+	@media (max-width: 64em);
+}
+@mixin lg_up {
+	@media (min-width: 64em);
+}
+@mixin lg_only {
+	@media (min-width: 64em) and (max-width: 74.9375em);
+}
+
+// Extra large
+@mixin xlarge-up-4 {
+	@media (min-width: 74.9375em);
+}
+```
+
+### Foundation Grid
+
+- Uses Foundation CSS framework for grid system
+- Custom .row with max-width: none
+- Custom xlarge-up-4 grid (25% width columns)
+
+## Navigation Structure
+
+### Desktop Navigation
+
+- **Home page**: `nav#desktop_start` - Initially hidden (opacity: 0)
+- **Other pages**: `nav#desktop` - Visible (opacity: 1)
+- Fixed position (top: 10px, right: 0)
+- SVG logo with hover effects
+- Sticky navigation with animation on scroll
+
+### Mobile Navigation
+
+- Fixed bottom navigation (`nav#mobile`)
+- 4em height with centered content
+- Icons + text labels
+- Auto-hide on scroll down, show on scroll up
+
+### Navigation Animations
+
+- Sticky animation: `moveDown` keyframe (slides from -40px)
+- Mobile auto-hide with smooth transitions
+- Logo color animation on hover (cycles through brand colors)
+
+## Key Animations & Effects
+
+### Logo Animations
+
+1. **SVG Path Drawing Animation** (preloader)
+
+   - Circle path: 4.5s ease-in-out stroke-dashoffset
+   - Font path: 2s ease-in-out stroke-dashoffset
+   - Session storage prevents replay
+
+2. **Logo Color Cycle** (on hover)
+
+```scss
+@keyframes logoColor {
+	0% {
+		color: $fifth-red;
+	}
+	25% {
+		color: $fifth-yellow;
+	}
+	50% {
+		color: $fifth-blue;
+	}
+	75% {
+		color: $fifth-darkgrey;
+	}
+	100% {
+		color: $fifth-red;
+	}
+}
+```
+
+### Text Shadow Animation
+
+```scss
+@keyframes shadow {
+	0% {
+		text-shadow: -0.1em 0 $fifth-blue, 0.1em 0 $fifth-yellow;
+	}
+	25% {
+		text-shadow: -0.05em 0 $fifth-blue, 0.05em 0 $fifth-yellow;
+	}
+	50% {
+		text-shadow: 0.1em 0 $fifth-blue, -0.1em 0 $fifth-yellow;
+	}
+	75% {
+		text-shadow: -0.05em 0 $fifth-blue, 0.05em 0 $fifth-yellow;
+	}
+	100% {
+		text-shadow: -0.1em 0 $fifth-blue, 0.1em 0 $fifth-yellow;
+	}
+}
+```
+
+### Background Canvas Animation
+
+- Sine wave animation using HTML5 Canvas
+- Multiple colored sine waves with different phases
+- Colors: $fifth-darkgrey, $fifth-red, $fifth-blue, $fifth-yellow
+- 35ms refresh rate, decreasing seconds by .0025
+
+### Hover Effects - Portfolio Grid
+
+```scss
+figure.effect:hover {
+	img {
+		transform: scale3d(1.1, 1.1, 1);
+		opacity: 0.4;
+	}
+	p {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+```
+
+### Preloader Animation
+
+```scss
+@keyframes moveit {
+	0% {
+		transform: translateY(0px);
+	}
+	35% {
+		transform: translateY(0px);
+		opacity: 0.3;
+	}
+	50% {
+		transform: translateY(-8px);
+		opacity: 0.8;
+	}
+	70% {
+		transform: translateY(3px);
+		opacity: 0.8;
+	}
+	85% {
+		transform: translateY(-8px);
+	}
+}
+```
+
+## Interactive Elements
+
+### Link Styles
+
+```scss
+a {
+	padding: 0.2em 0.1em 0 0.1em;
+	transition: 0.5s;
+	color: inherit;
+	background: rgba($fifth-red, 0);
+	box-shadow: inset 0 -0.3em 0 $fifth-red;
+
+	&:hover {
+		color: $fifth-white;
+		background: $fifth-red;
+	}
+}
+```
+
+### Button Styles
+
+```scss
+.tags li a {
+	font-family: $fifth-bold;
+	transition: color 0.4s, background-color 0.4s;
+	color: $fifth-blue;
+	border: 3px $fifth-blue solid;
+	border-radius: 4px;
+
+	&:hover {
+		color: $fifth-white;
+		background-color: $fifth-blue;
+	}
+}
+```
+
+### Tooltip System
+
+- Custom CSS tooltips with data-tooltip attribute
+- Multiple positions: default, left, right
+- Smooth transitions with cubic-bezier easing
+- Triangle indicators for certain tooltips
+
+## Layout Components
+
+### Spacing System
+
+```scss
+// Margin classes
+.spacer-top-l {
+	margin-top: 8em;
+	@md_up: 16em;
+}
+.spacer-top-m {
+	margin-top: 4em;
+	@md_up: 12em;
+}
+.spacer-top-s {
+	margin-top: 2em;
+	@md_up: 4em;
+}
+.spacer-top-xs {
+	margin-top: 1em;
+	@md_up: 2em;
+}
+
+// Similar pattern for bottom, both
+```
+
+### Video Container
+
+```scss
+.videocontainer {
+	position: relative;
+	overflow: hidden;
+	max-width: 100%;
+	height: 0;
+	padding-bottom: 56.25%; // 16:9 aspect ratio
+
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+```
+
+## Page Templates & Structure
+
+### Home Page Structure
+
+1. **Hero Section** (`#start`)
+
+   - Logo
+   - Animated subline text
+   - Background canvas animation
+   - Height: 100vh on large screens
+
+2. **Video Section**
+
+   - Responsive video container
+   - Vimeo embed with custom styling
+
+3. **Last Projects** (snippet)
+4. **Clients** (snippet)
+5. **Contact Section**
+   - Address information
+   - Social media links
+
+### Portfolio Page Structure
+
+1. **Portfolio Grid**
+
+   - Responsive grid: 1/2/3/4 columns
+   - Tag filtering system
+   - Hover effects on project items
+   - Pagination with SVG arrows
+
+2. **Project Items**
+   - Image with multiple srcset sizes
+   - Title and tags overlay
+   - Smooth transform animations
+
+### Project Page Structure
+
+1. **Project Title**
+2. **Video Container**
+3. **Navigation** (prev/next/overview)
+   - Keyboard navigation support (arrow keys)
+   - SVG icons with hover effects
+   - Tooltips
+
+## Scripts & JavaScript Features
+
+### Main JavaScript (main.js)
+
+1. **Touch/No-touch Detection**
+
+   - Adds classes for conditional styling
+
+2. **Mobile Navigation Auto-hide**
+
+   - Scroll direction detection
+   - Smooth show/hide animations
+
+3. **Desktop Tag Filtering**
+
+   - jQuery-based fade effects
+   - Filter by project tags
+
+4. **Keyboard Navigation**
+
+   - Mousetrap.js integration
+   - Arrow keys for project navigation
+   - Up arrow for overview
+
+5. **Background Animation**
+   - Canvas-based sine wave animation
+   - Multiple colored waves
+   - Continuous animation loop
+
+### Preloader Script (preload.js)
+
+1. **SVG Path Animation**
+
+   - Stroke-dasharray/dashoffset animation
+   - Separate timing for circle and text
+   - Session storage to prevent replay
+
+2. **Fade Transitions**
+   - Status and preloader fade out
+   - Coordinated timing
+
+### Plugin Dependencies
+
+- **jQuery 2.2.3**: DOM manipulation, animations
+- **Mousetrap 1.5.3**: Keyboard event handling
+- **Picturefill 3.0.2**: Responsive images polyfill
+- **Foundation CSS**: Grid system and responsive utilities
+
+## Content Structure
+
+### Page Types
+
+1. **Home** - Hero page with video and company info
+2. **Portfolio** - Grid of projects with filtering
+3. **Project** - Individual project details with video
+4. **About** - Company information
+5. **Contact** - Contact details and form
+6. **Blog** - Article listings (if used)
+
+### Content Fields
+
+**Home Page:**
+
+- Title, reel (video ID), subline, bio
+
+**Project Pages:**
+
+- Title, video (Vimeo ID), text (description), tags
+
+**Portfolio Page:**
+
+- Title, children (projects)
+
+### Media Handling
+
+- Responsive images with srcset
+- Multiple breakpoints: 100w through 2000w
+- Quality: 70% JPEG compression
+- Crop: true for consistent aspect ratios
+
+## Performance Optimizations
+
+### Image Optimization
+
+- Progressive JPEG loading
+- Multiple sizes in srcset
+- Lazy loading considerations
+- Optimized thumbnail generation
+
+### CSS Architecture
+
+- SCSS with mixins for responsive design
+- Efficient selector usage
+- Consolidated animations
+- Vendor prefixes for cross-browser support
+
+### JavaScript Optimization
+
+- Minified vendor libraries
+- Event delegation
+- Throttled scroll events
+- Session storage for performance
+
+## SEO & Meta
+
+- Semantic HTML structure
+- Proper meta tags
+- Open Graph compatibility
+- Favicon implementation
+- Structured navigation
+
+## Browser Support
+
+- Modern browsers with graceful degradation
+- CSS fallbacks for older browsers
+- Progressive enhancement approach
+- Touch vs no-touch feature detection
+
+## Migration Notes for Baukasten
+
+### Required Blocks
+
+1. **BlockVideo** - For project videos and hero video
+2. **BlockText** - For project descriptions and content
+3. **BlockGrid** - For portfolio grid layout
+4. **BlockImage** - For project thumbnails and images
+
+### Custom Components Needed
+
+1. **Navigation component** - Desktop/mobile with animations
+2. **Portfolio grid** - With filtering and hover effects
+3. **Video container** - Responsive Vimeo embeds
+4. **Preloader** - SVG animation component
+5. **Background animation** - Canvas sine waves
+
+### Styling Considerations
+
+1. **Responsive font sizing** - Custom mixin implementation
+2. **Color system** - Brand color variables
+3. **Animation library** - All keyframe animations
+4. **Grid system** - Custom responsive breakpoints
+5. **Typography** - Font loading and fallbacks
+
+### JavaScript Features to Recreate
+
+1. **Keyboard navigation** - Arrow key project navigation
+2. **Touch detection** - For conditional styling
+3. **Scroll animations** - Mobile nav auto-hide
+4. **Canvas animation** - Background sine waves
+5. **SVG animations** - Logo path drawing
+6. **Tag filtering** - Portfolio filter system
+
+This documentation provides a complete reference for recreating the original Fifth Music website functionality and aesthetic in the new Kirby 4 + Baukasten system.
