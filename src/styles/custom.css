@@ -1,0 +1,70 @@
+@import './animations.css';
+
+h2 {
+    text-shadow: var(--colorSecondary) -6px 0px, var(--colorTertiary) 6px 0px;
+}
+
+
+/* Header */
+
+#logo > svg {
+    fill: var(--colorWhite);
+    transition: .3s;
+}
+
+.header--active #logo > svg {
+    fill: var(--colorPrimary);
+}
+
+/* Hero */
+
+.hero h1 {
+    @apply !leading-[1] !tracking-tighter;
+    font-size: clamp(1.000rem, calc(-0.400rem + 7vw), 8.000rem);
+    animation: shadow 10s infinite linear;
+}
+
+#logo_hor
+{
+    transition: .3s;
+    fill: none;
+    stroke: var(--colorBlack);
+    stroke-miterlimit: 10;
+    stroke-width: 4px;
+
+
+        width: auto;
+        height: 7vw;
+        margin-top: 15vh;
+
+    &:hover
+    {
+        transition: .3s;
+        animation: logoColor 10s infinite;
+
+        fill: currentColor;
+        stroke-width: 0;
+    }
+}
+
+
+.get-in-touch-text p {
+    @apply text-5xl py-4;
+}
+
+.kirby-text a {
+    padding: .2em .1em 0 .1em;
+
+    transition: .5s;
+    text-decoration: none;
+
+    color: inherit;
+    background: rgba( var(--colorPrimary), .0);
+    box-shadow: inset 0 -.3em 0 var(--colorPrimary);
+    &:hover
+    {
+        opacity: 1;
+        color: var(--colorWhite);
+        background: var(--colorPrimary);
+    }
+}
