@@ -28,13 +28,14 @@ h2 {
 =            Header            =
 =============================================*/
 
-
 #home #logo > svg {
 	fill: var(--colorWhite);
 	transition: 0.3s;
 }
 
-#home .header--active #logo > svg, .header--active #logo > svg, #logo > svg {
+#home .header--active #logo > svg,
+.header--active #logo > svg,
+#logo > svg {
 	fill: var(--colorPrimary);
 }
 
@@ -76,6 +77,7 @@ h2 {
 	color: white !important;
 }
 
-/* .grid-default {
+.grid-default:has(.featured) {
 	column-gap: 0 !important;
-} */
+	background-color: red;
+}
