@@ -28,12 +28,13 @@ h2 {
 =            Header            =
 =============================================*/
 
-#logo > svg {
+
+#home #logo > svg {
 	fill: var(--colorWhite);
 	transition: 0.3s;
 }
 
-.header--active #logo > svg {
+#home .header--active #logo > svg, .header--active #logo > svg, #logo > svg {
 	fill: var(--colorPrimary);
 }
 
@@ -43,7 +44,7 @@ h2 {
 
 .hero h1 {
 	@apply !leading-[1] !tracking-tighter;
-	font-size: clamp(1rem, calc(-0.4rem + 7vw), 8rem);
+	font-size: clamp(1rem, calc(-0.4rem + 7vw), 7rem);
 	animation: shadow 10s infinite linear;
 }
 
@@ -67,6 +68,11 @@ h2 {
 	}
 }
 
-.get-in-touch-text p {
-	@apply py-4 text-5xl;
+/*=============================================
+=            Home            =
+=============================================*/
+
+.featured figcaption {
+	color: white !important;
 }
+
