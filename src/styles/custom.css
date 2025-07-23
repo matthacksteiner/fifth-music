@@ -1,6 +1,14 @@
 @import './animations.css';
 
 /*=============================================
+=            General            =
+=============================================*/
+
+.navigation-block {
+	@apply justify-center;
+}
+
+/*=============================================
 =            Text            =
 =============================================*/
 
@@ -73,11 +81,100 @@ h2 {
 =            Home            =
 =============================================*/
 
-.featured figcaption {
-	color: white !important;
+.featured .grid-default {
+	column-gap: 0 ;
 }
 
-.grid-default:has(.featured) {
-	column-gap: 0 !important;
-	background-color: red;
+.featured .blocks.blockImages {
+	overflow: hidden;
+
+	a {
+		display: block;
+		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+		&:hover {
+			transform: translateY(-4px);
+
+			.overlay {
+				&::before {
+					opacity: 0;
+				}
+
+				&::after {
+					opacity: 0.15;
+				}
+
+				.picture-container {
+					transform: scale(1.05);
+				}
+
+				.text-content {
+					transform: translate(-50%, -50%) translateY(-2px);
+
+					figcaption {
+						text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+						transform: scale(1.02);
+					}
+				}
+			}
+		}
+	}
+
+	.overlay {
+		position: relative;
+		/* overflow: hidden; */
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: linear-gradient(
+				135deg,
+				rgba(0, 0, 0, 0.4) 0%,
+				rgba(0, 0, 0, 0.6) 100%
+			);
+			opacity: 1;
+			z-index: 10;
+			transition: opacity 0.5s ease;
+			pointer-events: none;
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: linear-gradient(
+				135deg,
+				var(--colorPrimary) 0%,
+				var(--colorSecondary) 100%
+			);
+			opacity: 0;
+			z-index: 11;
+			transition: opacity 0.5s ease;
+			pointer-events: none;
+		}
+
+		.picture-container {
+			transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+			img {
+				transition: filter 0.5s ease;
+			}
+		}
+
+		.text-content {
+			transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+			figcaption {
+				transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+				position: relative;
+			}
+		}
+	}
 }
