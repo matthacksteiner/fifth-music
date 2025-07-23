@@ -184,6 +184,6 @@ h2 {
 	}
 }
 
-footer .blockColumns {
+footer > .blockColumns {
 	align-items: end;
 }
