@@ -68,8 +68,37 @@ footer a:hover {
 }
 
 /*=============================================
-=            Home            =
+=            Hover Images            =
 =============================================*/
+
+.section {
+	.section-item {
+		.picture-container {
+			@apply transition-transform duration-[0.5s] ease-in-out;
+		}
+
+		.relative {
+			@apply overflow-hidden before:pointer-events-none before:absolute before:inset-0 before:z-10 before:opacity-0 before:transition-opacity before:duration-[0.5s] before:ease-[ease] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:z-[11] after:opacity-0 after:transition-opacity after:duration-[0.5s] after:ease-[ease] after:content-[''];
+
+			&::after {
+				background: linear-gradient(
+					135deg,
+					var(--colorPrimary) 0%,
+					var(--colorSecondary) 100%
+				);
+			}
+		}
+
+		a:hover {
+			.picture-container {
+				@apply scale-105;
+			}
+			.relative::after {
+				@apply opacity-[0.15];
+			}
+		}
+	}
+}
 
 .featured {
 	.grid-default {
@@ -147,6 +176,10 @@ footer a:hover {
 #get-in-touch-grid > .blockColumns {
 	@apply items-end;
 }
+
+/*=============================================
+=            Footer            =
+=============================================*/
 
 footer > .blockColumns {
 	align-items: end;
