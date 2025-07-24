@@ -181,6 +181,12 @@ footer a:hover {
 =            Footer            =
 =============================================*/
 
-footer > .blockColumns {
-	align-items: end;
+footer {
+	.columns {
+		@apply px-[var(--grid-margin-mobile)] lg:px-0;
+	}
+
+	> .blockColumns {
+		align-items: end;
+	}
 }
