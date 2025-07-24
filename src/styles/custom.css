@@ -22,18 +22,12 @@ h2 {
 
 .kirby-text a,
 footer a {
-	display: inline-block;
-	padding: 0.2em 0.1em 0 0.1em;
-	margin-bottom: 0.3em;
-
-	transition: 0.5s;
-	text-decoration: none;
-
+	@apply mb-2 inline-block px-1 pt-1 no-underline transition-all duration-500;
 	color: inherit;
 	background: rgba(var(--colorPrimary), 0);
 	box-shadow: inset 0 -0.3em 0 var(--colorPrimary);
 	&:hover {
-		opacity: 1;
+		@apply opacity-100;
 		color: var(--colorWhite);
 		background: var(--colorPrimary);
 	}
