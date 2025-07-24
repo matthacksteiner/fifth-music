@@ -22,15 +22,15 @@ h2 {
 
 .kirby-text a,
 footer a {
+	@apply text-inherit shadow-[inset_0_-0.3em_0_var(--colorPrimary)];
 	@apply mb-2 inline-block px-1 pt-1 no-underline transition-all duration-500;
-	color: inherit;
 	background: rgba(var(--colorPrimary), 0);
-	box-shadow: inset 0 -0.3em 0 var(--colorPrimary);
-	&:hover {
-		@apply opacity-100;
-		color: var(--colorWhite);
-		background: var(--colorPrimary);
-	}
+}
+.kirby-text a:hover,
+footer a:hover {
+	@apply text-[color:var(--colorWhite)];
+	@apply opacity-100;
+	background: var(--colorPrimary);
 }
 
 /*=============================================
@@ -38,18 +38,16 @@ footer a {
 =============================================*/
 
 #home #logo > svg {
-	fill: var(--colorWhite);
-	transition: 0.3s;
+	@apply transition-[0.3s];
+	fill: transparent;
 }
-
 #home .header--active #logo > svg,
 .header--active #logo > svg,
 #logo > svg {
-	fill: var(--colorPrimary);
+	@apply fill-[var(--colorPrimary)];
 }
-
 .nav-link.active {
-	color: var(--colorPrimary);
+	@apply text-[color:var(--colorPrimary)];
 }
 
 /*=============================================
@@ -58,129 +56,96 @@ footer a {
 
 .hero h1 {
 	@apply !leading-[1] !tracking-tighter;
-	font-size: clamp(1rem, calc(-0.4rem + 7vw), 7rem);
 	animation: shadow 10s infinite linear;
+}
+#home .hero h1 {
+	@apply lg:text-[clamp(1rem,calc(-0.4rem_+_7vw),7rem)];
 }
 
 #logo_hor {
-	transition: 0.3s;
-	fill: none;
-	stroke: var(--colorBlack);
+	@apply w-auto fill-none stroke-[color:var(--colorBlack)] stroke-[4px] transition-[0.3s] hover:animate-[logoColor_10s_infinite] hover:fill-current hover:stroke-0 hover:transition-[0.3s] lg:h-[7vw];
 	stroke-miterlimit: 10;
-	stroke-width: 4px;
-
-	width: auto;
-	height: 7vw;
-	margin-top: 15vh;
-
-	&:hover {
-		transition: 0.3s;
-		animation: logoColor 10s infinite;
-
-		fill: currentColor;
-		stroke-width: 0;
-	}
 }
 
 /*=============================================
 =            Home            =
 =============================================*/
 
-.featured .grid-default {
-	column-gap: 0;
-}
+.featured {
+	.grid-default {
+		column-gap: 0;
+	}
 
-.featured .blocks.blockImages {
-	overflow: hidden;
+	.blockSlider {
+		@apply overflow-hidden;
 
-	a {
-		display: block;
-		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+		.swiper-slide {
+			a {
+				@apply block transition-all duration-[0.5s] ease-in-out hover:-translate-y-1;
 
-		&:hover {
-			transform: translateY(-4px);
+				&:hover {
+					.overlay {
+						&::before {
+							@apply opacity-0;
+						}
+						&::after {
+							@apply opacity-[0.15];
+						}
+						.picture-container {
+							@apply scale-105;
+						}
+						.text-content {
+							@apply -translate-x-2/4 -translate-y-2/4;
 
-			.overlay {
-				&::before {
-					opacity: 0;
-				}
-
-				&::after {
-					opacity: 0.15;
-				}
-
-				.picture-container {
-					transform: scale(1.05);
-				}
-
-				.text-content {
-					transform: translate(-50%, -50%) translateY(-2px);
-
-					figcaption {
-						text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-						transform: scale(1.02);
+							figcaption {
+								@apply scale-[1.02];
+								text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+							}
+						}
 					}
 				}
 			}
 		}
-	}
 
-	.overlay {
-		position: relative;
+		.overlay {
+			@apply relative before:pointer-events-none before:absolute before:inset-0 before:z-10 before:opacity-100 before:transition-opacity before:duration-[0.5s] before:ease-[ease] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:z-[11] after:opacity-0 after:transition-opacity after:duration-[0.5s] after:ease-[ease] after:content-[''];
 
-		&::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: linear-gradient(
-				135deg,
-				rgba(0, 0, 0, 0.4) 0%,
-				rgba(0, 0, 0, 0.6) 100%
-			);
-			opacity: 1;
-			z-index: 10;
-			transition: opacity 0.5s ease;
-			pointer-events: none;
-		}
-
-		&::after {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: linear-gradient(
-				135deg,
-				var(--colorPrimary) 0%,
-				var(--colorSecondary) 100%
-			);
-			opacity: 0;
-			z-index: 11;
-			transition: opacity 0.5s ease;
-			pointer-events: none;
-		}
-
-		.picture-container {
-			transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-			img {
-				transition: filter 0.5s ease;
+			&::before {
+				background: linear-gradient(
+					135deg,
+					rgba(0, 0, 0, 0.4) 0%,
+					rgba(0, 0, 0, 0.6) 100%
+				);
 			}
-		}
+			&::after {
+				background: linear-gradient(
+					135deg,
+					var(--colorPrimary) 0%,
+					var(--colorSecondary) 100%
+				);
+			}
 
-		.text-content {
-			transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+			.picture-container {
+				@apply transition-transform duration-[0.5s] ease-in-out;
 
-			figcaption {
-				transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-				position: relative;
+				img {
+					@apply transition-[filter] duration-[0.5s] ease-[ease];
+				}
+			}
+
+			.text-content {
+				@apply transition-transform duration-[0.5s] ease-in-out;
+
+				figcaption {
+					@apply relative transition-all duration-[0.5s] ease-in-out;
+				}
 			}
 		}
 	}
+}
+
+#get-in-touch-grid > .blockColumns {
+	@apply items-end;
 }
 
 footer > .blockColumns {
