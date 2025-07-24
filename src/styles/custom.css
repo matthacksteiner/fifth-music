@@ -1,8 +1,7 @@
 @import './animations.css';
 
-
-canvas  {
-	position: fixed;
+canvas {
+	@apply fixed opacity-50;
 }
 
 /*=============================================
@@ -21,7 +20,8 @@ h2 {
 	text-shadow: var(--colorSecondary) -6px 0px, var(--colorTertiary) 6px 0px;
 }
 
-.kirby-text a, footer a {
+.kirby-text a,
+footer a {
 	display: inline-block;
 	padding: 0.2em 0.1em 0 0.1em;
 	margin-bottom: 0.3em;
