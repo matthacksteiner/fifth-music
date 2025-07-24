@@ -189,4 +189,10 @@ footer {
 	> .blockColumns {
 		align-items: end;
 	}
+
+	#menu-footer {
+		.blockColumns {
+			@apply flex lg:grid;
+		}
+	}
 }
