@@ -1,1 +1,2 @@
 // Main Script
+import './bgAnimation';
