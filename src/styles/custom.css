@@ -100,49 +100,15 @@ footer a:hover {
 	}
 }
 
-.featured {
-	.grid-default {
-		column-gap: 0;
-	}
-
-	.blockSlider {
-		@apply overflow-hidden;
-
-		.swiper-slide {
-			a {
-				@apply block transition-all duration-[0.5s] ease-in-out hover:-translate-y-1;
-
-				&:hover {
-					.overlay {
-						&::before {
-							@apply opacity-0;
-						}
-						&::after {
-							@apply opacity-[0.15];
-						}
-						.picture-container {
-							@apply scale-105;
-						}
-						.text-content {
-							@apply -translate-x-2/4 -translate-y-2/4;
-
-							figcaption {
-								@apply scale-[1.02];
-								text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		.overlay {
-			@apply relative before:pointer-events-none before:absolute before:inset-0 before:z-10 before:opacity-100 before:transition-opacity before:duration-[0.5s] before:ease-[ease] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:z-[11] after:opacity-0 after:transition-opacity after:duration-[0.5s] after:ease-[ease] after:content-[''];
+.blockFeatured {
+	.featured-item {
+		.relative {
+			@apply overflow-hidden before:pointer-events-none before:absolute before:inset-0 before:z-10 before:opacity-100 before:transition-opacity before:duration-[0.5s] before:ease-[ease] before:content-[''] after:pointer-events-none after:absolute after:inset-0 after:z-[11] after:opacity-0 after:transition-opacity after:duration-[0.5s] after:ease-[ease] after:content-[''];
 
 			&::before {
 				background: linear-gradient(
 					135deg,
-					rgba(0, 0, 0, 0.4) 0%,
+					rgba(0, 0, 0, 0.1) 0%,
 					rgba(0, 0, 0, 0.6) 100%
 				);
 			}
@@ -153,21 +119,22 @@ footer a:hover {
 					var(--colorSecondary) 100%
 				);
 			}
+		}
 
-			.picture-container {
-				@apply transition-transform duration-[0.5s] ease-in-out;
+		.picture-container {
+			@apply transition-transform duration-[0.5s] ease-in-out;
 
-				img {
-					@apply transition-[filter] duration-[0.5s] ease-[ease];
-				}
+			img {
+				@apply transition-[filter] duration-[0.5s] ease-[ease];
 			}
+		}
 
-			.text-content {
-				@apply transition-transform duration-[0.5s] ease-in-out;
-
-				figcaption {
-					@apply relative transition-all duration-[0.5s] ease-in-out;
-				}
+		a:hover {
+			.picture-container {
+				@apply scale-105;
+			}
+			.relative::after {
+				@apply opacity-[0.15];
 			}
 		}
 	}
