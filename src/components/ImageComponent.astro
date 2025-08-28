@@ -1,4 +1,5 @@
 ---
+import type { ImageComponentComponentProps } from '../types/components.types';
 import { toRem } from '@lib/helpers';
 import Picture from '@components/Picture.astro';
 import ImageCaption from '@components/ImageCaption.astro';
@@ -16,7 +17,7 @@ const {
 	lightbox,
 	aboveFold,
 	isFirstSlide,
-} = Astro.props;
+} = Astro.props as ImageComponentComponentProps;
 
 const pictureProps = {
 	src: image.url,
@@ -48,7 +49,11 @@ const pictureProps = {
 const gridBlockMobile = toRem(global.gridBlockMobile) || '1rem';
 const gridBlockDesktop = toRem(global.gridBlockDesktop) || '1rem';
 const link = image.linkexternal;
-const shouldApplyZoom = lightbox && !image.linktoggle;
+// Block-level lightbox setting takes priority over file-level settings
+const shouldApplyZoom =
+	lightbox !== undefined
+		? lightbox && !image.linktoggle // Use block-level setting if explicitly set
+		: image.lightbox && !image.linktoggle; // Fall back to file-level setting
 
 // Dynamic overlay settings from image data
 const captionoverlay = image.captionoverlay;
@@ -106,4 +111,27 @@ const overlayColor = image.captionColor || '#000000';
 	.overlay:hover:before {
 		@apply opacity-0;
 	}
+
+	:global(.medium-zoom-overlay),
+	:global(.medium-zoom-image--opened) {
+		@apply z-50;
+	}
 </style>
+
+<script>
+	import mediumZoom from 'medium-zoom';
+
+	// Initialize lightbox only once globally to avoid conflicts
+	document.addEventListener('DOMContentLoaded', () => {
+		// Check if lightbox is already initialized to prevent double initialization
+		if (!document.body.hasAttribute('data-medium-zoom-initialized')) {
+			document.body.setAttribute('data-medium-zoom-initialized', 'true');
+
+			mediumZoom('[data-zoomable]', {
+				margin: 24,
+				background: 'rgba(0, 0, 0, 0.8)',
+				scrollOffset: 40,
+			});
+		}
+	});
+</script>
