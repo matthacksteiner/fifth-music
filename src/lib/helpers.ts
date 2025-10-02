@@ -80,3 +80,85 @@ export function ensureTrailingSlash(
 	// Ensure trailing slash for internal page links
 	return url.endsWith('/') ? url : `${url}/`;
 }
+
+/**
+ * Prepares SVG source for better inline rendering by adding viewBox and setting dimensions
+ * @param svgSource - The SVG source code to process
+ * @param fallbackWidth - Optional fallback width if not found in SVG attributes
+ * @param fallbackHeight - Optional fallback height if not found in SVG attributes
+ * @returns Processed SVG source with viewBox and 100% dimensions
+ */
+export function prepareSvgSource(
+	svgSource: string,
+	fallbackWidth?: number | string,
+	fallbackHeight?: number | string
+): string {
+	if (!svgSource) return '';
+
+	// Generate a unique ID for this SVG instance
+	const uniqueId = `svg-${Math.random().toString(36).substr(2, 9)}`;
+
+	// First, scope any internal style classes to prevent conflicts
+	let processedSvg = svgSource;
+
+	// Find and process <style> tags
+	processedSvg = processedSvg.replace(
+		/<style([^>]*)>([\s\S]*?)<\/style>/gi,
+		(match, attributes, styleContent) => {
+			// Scope all class selectors by prepending the unique ID
+			const scopedStyles = styleContent.replace(
+				/\.([a-zA-Z0-9_-]+)/g,
+				`.${uniqueId} .$1`
+			);
+			return `<style${attributes}>${scopedStyles}</style>`;
+		}
+	);
+
+	// Add the unique ID as a class to the SVG element
+	// Add viewBox if missing and ensure width/height are set to 100%
+	const svgWithViewBox = processedSvg.replace(
+		/<svg([^>]*)>/i,
+		(match, attributes) => {
+			let newAttributes = attributes;
+
+			// Extract original width and height if present
+			const widthMatch = attributes.match(/\bwidth\s*=\s*["']([^"']*)["']/i);
+			const heightMatch = attributes.match(/\bheight\s*=\s*["']([^"']*)["']/i);
+			const origWidth = widthMatch ? widthMatch[1] : fallbackWidth;
+			const origHeight = heightMatch ? heightMatch[1] : fallbackHeight;
+
+			// If no viewBox but has width/height, add viewBox
+			if (!attributes.includes('viewBox') && origWidth && origHeight) {
+				newAttributes += ` viewBox="0 0 ${origWidth} ${origHeight}"`;
+			}
+
+			// Set width and height to 100% but preserve aspect ratio
+			newAttributes = newAttributes
+				.replace(/\bwidth\s*=\s*["'][^"']*["']/i, 'width="100%"')
+				.replace(/\bheight\s*=\s*["'][^"']*["']/i, 'height="100%"');
+
+			// If width/height weren't in the original, add them
+			if (!widthMatch) newAttributes += ' width="100%"';
+			if (!heightMatch) newAttributes += ' height="100%"';
+
+			// Add preserveAspectRatio to maintain consistent sizing
+			if (!attributes.includes('preserveAspectRatio')) {
+				newAttributes += ' preserveAspectRatio="xMidYMid meet"';
+			}
+
+			// Add the unique class for scoping styles
+			if (attributes.includes('class=')) {
+				newAttributes = newAttributes.replace(
+					/class\s*=\s*["']([^"']*)["']/i,
+					`class="${uniqueId} $1"`
+				);
+			} else {
+				newAttributes += ` class="${uniqueId}"`;
+			}
+
+			return `<svg${newAttributes}>`;
+		}
+	);
+
+	return svgWithViewBox;
+}

@@ -1,6 +1,7 @@
 ---
 import Link from '@components/Link.astro';
 import type { BlockIconListComponentProps } from '@app-types/components.types';
+import { prepareSvgSource } from '@lib/helpers';
 
 const {
 	items,
@@ -48,7 +49,11 @@ const {
 							<div class:list={['link', 'flex']}>
 								{item.icon && (
 									<div
-										set:html={item.icon.source}
+										set:html={prepareSvgSource(
+											item.icon.source,
+											item.icon.width,
+											item.icon.height
+										)}
 										class:list={['icon', `text--${color}`]}
 										style={`height: ${iconSize}px; width: ${iconSize}px;`}
 									/>
@@ -78,7 +83,11 @@ const {
 						>
 							{item.icon && (
 								<div
-									set:html={item.icon.source}
+									set:html={prepareSvgSource(
+										item.icon.source,
+										item.icon.width,
+										item.icon.height
+									)}
 									class:list={['icon', `text--${color}`]}
 									style={`height: ${iconSize}px; width: ${iconSize}px;`}
 								/>
@@ -112,5 +121,13 @@ const {
 	}
 	.link {
 		column-gap: calc(var(--iconListGap) * 1px);
+	}
+
+	/* Ensure SVG icons maintain consistent size and aspect ratio */
+	.icon {
+		@apply flex-shrink-0;
+	}
+	.icon :global(svg) {
+		@apply block h-full w-full object-contain;
 	}
 </style>
