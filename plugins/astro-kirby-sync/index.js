@@ -1,6 +1,5 @@
 // Import the sync function from the Netlify Build Plugin file
-import { performFullSync, performIncrementalSync } from './astro-kirby-sync.js';
-import fs from 'fs';
+import { performFullSync } from './astro-kirby-sync.js';
 import path from 'path';
 import fetch from 'node-fetch';
 
@@ -37,7 +36,7 @@ export default function astroKirbySync() {
 						if (isMaintenanceMode) {
 							logger.warn('🚧 Maintenance mode is bypassed in development');
 						}
-					} catch (error) {
+					} catch {
 						// Ignore errors when checking maintenance mode in dev
 					}
 
