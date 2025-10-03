@@ -190,13 +190,13 @@ const vimeoPlayer =
 	}
 </style>
 
-<script define:vars={{ cursor, aboveFold }}>
+<script define:vars={{ cursor }}>
 	if (cursor) {
 		document.addEventListener('DOMContentLoaded', function () {
 			const video = document.querySelectorAll('video');
 
 			video.forEach((item) => {
-				item.addEventListener('click', (event) => {
+				item.addEventListener('click', () => {
 					if (item.paused) {
 						item.play();
 					} else {
@@ -207,14 +207,14 @@ const vimeoPlayer =
 		});
 	}
 	document.addEventListener('DOMContentLoaded', function () {
-		let lazyVideos = [].slice.call(document.querySelectorAll('video'));
+		const lazyVideos = [].slice.call(document.querySelectorAll('video'));
 
 		if ('IntersectionObserver' in window) {
-			let lazyVideoObserver = new IntersectionObserver(function (entries) {
+			const lazyVideoObserver = new IntersectionObserver(function (entries) {
 				entries.forEach(function (video) {
 					if (video.isIntersecting) {
-						for (let source in video.target.children) {
-							let videoSource = video.target.children[source];
+						for (const source in video.target.children) {
+							const videoSource = video.target.children[source];
 							if (
 								typeof videoSource.tagName === 'string' &&
 								videoSource.tagName === 'SOURCE' &&
