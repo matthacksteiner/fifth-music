@@ -30,12 +30,12 @@ const {
 	metadata,
 	aboveFold,
 } = Astro.props as BlockSliderComponentProps;
-const hasControl = (control) => controls && controls.includes(control);
+const hasControl = (control: string) => controls && controls.includes(control);
 const arrows = hasControl('arrows');
 const dots = hasControl('dots');
 const line = hasControl('line');
-const autoplay = hasControl('autoplay');
 const ticker = hasControl('ticker');
+const infinite = hasControl('infinite');
 const full = hasControl('full') ? 'h-screen' : null;
 const overlay = toggle && hasControl('overlay') ? 'overlay' : null;
 
@@ -144,6 +144,7 @@ const loadingStrategy = aboveFold ? undefined : 'lazy';
 			const time = blockSlider?.dataset.time;
 			const autoplay = controls?.includes('autoplay');
 			const ticker = controls?.includes('ticker');
+			const infinite = controls?.includes('infinite');
 			const effect = blockSlider?.dataset.effect;
 			const viewMobile = blockSlider?.dataset.viewmobile
 				? blockSlider.dataset.viewmobile
@@ -200,13 +201,19 @@ const loadingStrategy = aboveFold ? undefined : 'lazy';
 					};
 					swiperOptions.allowTouchMove = false;
 					swiperOptions.loopAdditionalSlides = 10;
-				} else if (autoplay) {
-					swiperOptions.autoplay = {
-						delay: parseInt(time),
-					};
+				} else {
+					if (infinite) {
+						swiperOptions.loop = true;
+					}
+
+					if (autoplay) {
+						swiperOptions.autoplay = {
+							delay: parseInt(time),
+						};
+					}
 				}
 
-				const _swiper = new Swiper(swiperSlider as HTMLElement, swiperOptions);
+				new Swiper(swiperSlider as HTMLElement, swiperOptions);
 			}
 		}
 	});

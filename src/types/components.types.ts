@@ -143,11 +143,12 @@ export interface CardContentComponentProps {
 	text?: string;
 	image?: any;
 	hovertoggle?: boolean;
-	hovertext?: string;
 	justify?: string;
 	Level?: string;
+	titleFont?: string;
 	titleSize?: string;
 	titleAlign?: string;
+	textFont?: string;
 	textSize?: string;
 	textAlign?: string;
 	widthMobile?: string;
@@ -413,12 +414,10 @@ export interface BlockContactFormComponentProps {
 	fieldSpacing?: 'small' | 'medium' | 'large';
 	formWidth?: 'full' | 'large' | 'medium' | 'small';
 	formAlign?: 'left' | 'center' | 'right';
+	textFont?: string;
+	textColor?: string;
+	textSize?: string;
 	formBorderRadius?: number;
-	textGroup?: {
-		textfont?: string;
-		textcolor?: string;
-		textsize?: string;
-	};
 	buttonLocal?: boolean;
 	buttonSettings?: ButtonSettings | null;
 	buttonColors?: ButtonColors | null;

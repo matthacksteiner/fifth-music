@@ -75,6 +75,18 @@ function getSyncStateFilePath() {
 	return path.join(astroDir, 'kirby-sync-state.json');
 }
 
+function getHybridManifestPath() {
+	const netlifyDir = path.resolve('./.netlify');
+	ensureDirectoryExists(netlifyDir);
+	return path.join(netlifyDir, 'hybrid-images-manifest.json');
+}
+
+function getHybridMediaDir() {
+	const mediaDir = path.resolve('./public/media');
+	ensureDirectoryExists(mediaDir);
+	return mediaDir;
+}
+
 // Load sync state from disk
 function loadSyncState() {
 	const stateFile = getSyncStateFilePath();
@@ -121,31 +133,6 @@ function hasContentChanged(url, newContent, oldHashes) {
 	return !oldHash || oldHash !== newHash;
 }
 
-// Check if content needs to be downloaded (either changed or file doesn't exist)
-// Note: This function is currently unused but kept for future optimization opportunities
-function _needsDownload(
-	url,
-	newContent,
-	oldHashes,
-	filePath,
-	forceDownloadMissingFiles = true
-) {
-	// Check if content has changed first
-	const contentChanged = hasContentChanged(url, newContent, oldHashes);
-
-	// If content changed, we need to download
-	if (contentChanged) {
-		return true;
-	}
-
-	// If content hasn't changed but file doesn't exist, download only if forced
-	if (!fs.existsSync(filePath)) {
-		return forceDownloadMissingFiles;
-	}
-
-	return false;
-}
-
 // Perform incremental sync for a specific language
 async function performIncrementalLanguageSync(
 	API_URL,
@@ -182,11 +169,11 @@ async function performIncrementalLanguageSync(
 
 	// Always ensure the file exists (create if missing or changed)
 	if (globalContentChanged || !fs.existsSync(globalFilePath)) {
-		await saveJsonFile(globalFilePath, globalData);
+		saveJsonFile(globalFilePath, globalData);
 
 		// Also save to root if this is the default language
 		if (!lang) {
-			await saveJsonFile(path.join(contentDir, 'global.json'), globalData);
+			saveJsonFile(path.join(contentDir, 'global.json'), globalData);
 		}
 	}
 
@@ -210,11 +197,11 @@ async function performIncrementalLanguageSync(
 
 	// Always ensure the file exists (create if missing or changed)
 	if (indexContentChanged || !fs.existsSync(indexFilePath)) {
-		await saveJsonFile(indexFilePath, indexData);
+		saveJsonFile(indexFilePath, indexData);
 
 		// Also save to root if this is the default language
 		if (!lang) {
-			await saveJsonFile(path.join(contentDir, 'index.json'), indexData);
+			saveJsonFile(path.join(contentDir, 'index.json'), indexData);
 		}
 	}
 
@@ -270,11 +257,11 @@ async function performIncrementalLanguageSync(
 
 		// Always ensure the file exists (create if missing or changed)
 		if (pageContentChanged || !fs.existsSync(pageFilePath)) {
-			await saveJsonFile(pageFilePath, pageData);
+			saveJsonFile(pageFilePath, pageData);
 
 			// Also save to root if this is the default language
 			if (!lang) {
-				await saveJsonFile(path.join(contentDir, `${page.uri}.json`), pageData);
+				saveJsonFile(path.join(contentDir, `${page.uri}.json`), pageData);
 			}
 		}
 
@@ -492,10 +479,14 @@ export default {
 		);
 
 		const syncStateFile = getSyncStateFilePath();
+		const hybridManifestFile = getHybridManifestPath();
+		const hybridMediaDir = getHybridMediaDir();
 
 		try {
-			// Restore the sync state file from cache
+			// Restore cached sync state, manifest, and hybrid media assets
 			await utils.cache.restore(syncStateFile);
+			await utils.cache.restore(hybridManifestFile);
+			await utils.cache.restore(hybridMediaDir);
 
 			if (fs.existsSync(syncStateFile)) {
 				console.warn(
@@ -508,6 +499,23 @@ export default {
 					chalk.yellow('📦 [Netlify Build Plugin] No cached sync state found')
 				);
 			}
+
+			if (fs.existsSync(hybridManifestFile)) {
+				console.warn(
+					chalk.green(
+						'✅ [Netlify Build Plugin] Hybrid manifest restored from cache'
+					)
+				);
+			}
+
+			if (
+				fs.existsSync(hybridMediaDir) &&
+				fs.readdirSync(hybridMediaDir).length > 0
+			) {
+				console.warn(
+					chalk.green('✅ [Netlify Build Plugin] Hybrid media cache restored')
+				);
+			}
 		} catch (error) {
 			console.warn(
 				chalk.yellow(
@@ -515,6 +523,7 @@ export default {
 				)
 			);
 		}
+
 		// Skip content sync in development mode
 		if (process.env.CONTEXT === 'dev') {
 			console.warn(
@@ -599,6 +608,8 @@ export default {
 		);
 
 		const syncStateFile = getSyncStateFilePath();
+		const hybridManifestFile = getHybridManifestPath();
+		const hybridMediaDir = getHybridMediaDir();
 
 		try {
 			if (fs.existsSync(syncStateFile)) {
@@ -612,6 +623,32 @@ export default {
 			} else {
 				console.warn(
 					chalk.yellow('⚠️ [Netlify Build Plugin] No sync state file to cache')
+				);
+			}
+
+			if (fs.existsSync(hybridManifestFile)) {
+				await utils.cache.save(hybridManifestFile);
+				console.warn(
+					chalk.green('✅ [Netlify Build Plugin] Hybrid manifest cached successfully')
+				);
+			} else {
+				console.warn(
+					chalk.yellow(
+						'⚠️ [Netlify Build Plugin] No hybrid manifest file to cache'
+					)
+				);
+			}
+
+			if (fs.existsSync(hybridMediaDir)) {
+				await utils.cache.save(hybridMediaDir);
+				console.warn(
+					chalk.green('✅ [Netlify Build Plugin] Hybrid media cached successfully')
+				);
+			} else {
+				console.warn(
+					chalk.yellow(
+						'⚠️ [Netlify Build Plugin] No hybrid media directory to cache'
+					)
 				);
 			}
 		} catch (error) {
